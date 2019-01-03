@@ -4,4 +4,60 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 2.5rem 1.8rem;
+}
+
+.site-title {
+  font-size: 7rem;
+  font-family: "Josefin Sans";
+  font-weight: 300;
+  color: $color-primary;
+}
+
+.main-form {
+  width: 585px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+
+  &__input {
+    display: block;
+    width: 100%;
+    margin-bottom: 3rem;
+    padding: 1.5rem 1.8rem;
+    font-family: inherit;
+    font-size: 1.8rem;
+    background: #fff;
+    color: inherit;
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.1s;
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  &__btn {
+    background: $color-primary;
+    color: white;
+    padding: 1rem 3rem;
+    font-family: inherit;
+    font-size: 1.6rem;
+    border-radius: 3px;
+    border-color: transparent;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover,
+    &:focus {
+      background: lighten($color-primary, 10);
+    }
+  }
 }
