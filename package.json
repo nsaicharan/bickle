@@ -1,0 +1,25 @@
+{
+  "name": "bickle",
+  "version": "1.0.0",
+  "description": "Web search engine.",
+  "keywords": [
+    "bickle",
+    "search",
+    "search engine"
+  ],
+  "author": "Sai Charan",
+  "license": "MIT",
+  "scripts": {
+    "start": "gulp watch",
+    "build": "gulp build"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "babel-loader": "^8.0.4",
+    "browser-sync": "^2.26.3",
+    "gulp": "^4.0.0",
+    "gulp-sass": "^4.0.2",
+    "webpack": "^4.28.3"
+  }
+}
