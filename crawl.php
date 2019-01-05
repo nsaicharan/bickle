@@ -35,6 +35,45 @@ function createLink($src, $url)
   return $src;
 }
 
+function getDetails($url)
+{
+  $parser = new DOmDocumentParser($url);
+  
+  // Get Title
+  $titleArray = $parser->getTitleTags();
+
+  if (sizeof($titleArray) === 0 || $titleArray->item(0) === NULL) {
+    return;
+  }
+
+  $title = $titleArray->item(0)->nodeValue;
+  $title = str_replace('\n', '', $title);
+
+  if ($title === '') {
+    return;
+  }
+
+  // Get Description, Keywords
+  $description = '';
+  $keywords = '';
+  $metasArray = $parser->getMetatags();
+
+  foreach ($metasArray as $meta) {
+    if ($meta->getAttribute('name') == 'description') {
+      $description = $meta->getAttribute('content');
+    }
+
+    if ($meta->getAttribute('name') == 'keywords') {
+      $keywords = $meta->getAttribute('content');
+    }
+  }
+
+  $description = str_replace('\n', '', $description);
+  $keywords = str_replace('\n', '', $keywords);
+
+  echo "URL: $url, TITLE: $title, Description: $description, Keywords: $keywords <br>";
+}
+
 function followLinks($url) 
 {
   global $alreadyCrawled;
@@ -56,9 +95,11 @@ function followLinks($url)
     if (!in_array($href, $alreadyCrawled)) {
       $alreadyCrawled[] = $href;
       $crawling[] = $href;
-    }
 
-    echo $href . "<br>";
+      getDetails($href);
+    } else {
+      return;
+    }
   }
 
   array_shift($crawling);
@@ -69,5 +110,7 @@ function followLinks($url)
 
 }
 
-$startUrl = "https://projects.saicharan.com/parusworld";
+$startUrl = "https://bbc.com";
 followLinks($startUrl);
+
+?>
