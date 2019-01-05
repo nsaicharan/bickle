@@ -1,9 +1,34 @@
 <?php
-
+require "config.php";
 require "includes/DomDocumentParser.php";
 
 $alreadyCrawled = array();
 $crawling = array();
+
+function doesLinkExistInDB($url)
+{
+  global $con;
+
+  $query = $con->prepare("SELECT * FROM sites WHERE url = :url");
+  $query->bindParam(":url", $url);
+  $query->execute();
+
+  return $query->rowCount() != 0;
+}
+
+function insertLinkIntoDB($url, $title, $description, $keywords)
+{
+  global $con;
+
+  $query = $con->prepare("INSERT INTO SITES(url, title, description, keywords) VALUES(:url, :title, :description, :keywords)");
+  $query->bindParam(":url", $url);
+  $query->bindParam(":title", $title);
+  $query->bindParam(":description", $description);
+  $query->bindParam(":description", $description);
+  $query->bindParam(":keywords", $keywords);
+
+  return $query->execute();
+}
 
 function createLink($src, $url)
 {
@@ -71,7 +96,12 @@ function getDetails($url)
   $description = str_replace('\n', '', $description);
   $keywords = str_replace('\n', '', $keywords);
 
-  echo "URL: $url, TITLE: $title, Description: $description, Keywords: $keywords <br>";
+  if (doesLinkExistInDB($url)) {
+    echo "URL already exists in db. <br>";
+  } else {
+    $insert = insertLinkIntoDB($url, $title, $description, $keywords);
+    echo $insert ? "SUCCESS: $url inserted in DB. <br><br>" : "Something went wrong while inserting $url into DB <br><br>";
+  }
 }
 
 function followLinks($url) 
