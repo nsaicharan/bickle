@@ -4,6 +4,7 @@ require "includes/DomDocumentParser.php";
 
 $alreadyCrawled = array();
 $crawling = array();
+$alreadyFoundImages = array();
 
 function doesLinkExistInDB($url)
 {
@@ -27,6 +28,19 @@ function insertLinkIntoDB($url, $title, $description, $keywords)
   $query->bindParam(":description", $description);
   $query->bindParam(":keywords", $keywords);
 
+  return $query->execute();
+}
+
+function insertImageIntoDB($siteUrl, $src, $alt, $title)
+{
+  global $con;
+
+  $query = $con->prepare("INSERT INTO images(siteUrl, src, alt, title) VALUES(:siteUrl, :src, :alt, :title)");
+  $query->bindParam(":siteUrl", $siteUrl);
+  $query->bindParam(":src", $src);
+  $query->bindParam(":alt", $alt);
+  $query->bindParam(":title", $title);
+  
   return $query->execute();
 }
 
@@ -96,11 +110,39 @@ function getDetails($url)
   $description = str_replace('\n', '', $description);
   $keywords = str_replace('\n', '', $keywords);
 
+  // Insert link into db
   if (doesLinkExistInDB($url)) {
     echo "URL already exists in db. <br>";
   } else {
     $insert = insertLinkIntoDB($url, $title, $description, $keywords);
-    echo $insert ? "SUCCESS: $url inserted in DB. <br><br>" : "Something went wrong while inserting $url into DB <br><br>";
+
+    echo $insert ? "SUCCESS: $url inserted into DB. <br><br>" : "ERROR: Failed to insert $url into DB <br><br>";
+  }
+
+  // Get Images
+  global $alreadyFoundImages;
+
+  $imagesArray = $parser->getImages();
+  
+  foreach ($imagesArray as $image) {
+    $src = $image->getAttribute('src');
+    $alt = $image->getAttribute('alt');
+    $title = $image->getAttribute('src');
+
+    if (!$title && !$alt) {
+      continue;
+    }
+
+    $src = createLink($src, $url);
+
+    // Insert image into db
+    if (!in_array($src, $alreadyFoundImages)) {
+      $alreadyFoundImages[] = $src;
+
+      $insert = insertImageIntoDB($url, $src, $alt, $title);
+
+      echo $insert ? "SUCCESS: $src inserted into DB. <br><br>" : "ERROR: Failed to insert $src into DB <br><br>";
+    } 
   }
 }
 
@@ -127,9 +169,7 @@ function followLinks($url)
       $crawling[] = $href;
 
       getDetails($href);
-    } else {
-      return;
-    }
+    } 
   }
 
   array_shift($crawling);
