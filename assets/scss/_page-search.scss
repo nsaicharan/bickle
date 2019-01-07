@@ -1,9 +1,9 @@
 .search-header {
   background: $color-grey-light;
-  padding: 1.8rem 0 0;
 
   &__title {
     display: inline-block;
+    margin: 2.5rem 0 1.2rem;
     color: $color-primary;
     font-family: "Josefin Sans", sans-serif;
     font-size: 4rem;
@@ -16,14 +16,14 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
     border: 1px solid darken($color-grey-light, 2);
     border-radius: 3px;
   }
 
   &__input {
     flex: 1;
-    padding: 0.9rem 1.5rem;
+    padding: 1.1rem 1.5rem;
     font-size: 1.7rem;
     color: inherit;
     border: none;
@@ -53,7 +53,7 @@
 
   &__tab {
     display: inline-block;
-    margin-right: 1.2rem;
+    margin-right: 1.5rem;
     padding-bottom: 3px;
     font-size: 1.5rem;
     color: $color-grey-dark;
@@ -67,5 +67,37 @@
       font-weight: 600;
       border-bottom: 3px solid $color-secondary;
     }
+  }
+}
+
+.results {
+  &__count {
+    color: $color-grey-medium;
+    margin: 2rem 0;
+  }
+
+  &__item {
+    margin-bottom: 2.4rem;
+  }
+
+  &__link {
+    text-decoration: none;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  &__link:hover &__title {
+    text-decoration: underline;
+  }
+
+  &__url {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-style: normal;
+    color: $color-grey-medium;
+    word-break: break-all;
   }
 }
