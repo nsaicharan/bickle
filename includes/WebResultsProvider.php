@@ -26,18 +26,22 @@ class WebResultsProvider
     return $row['total'];
   }
 
-  public function getResults($page, $pageSize, $term)
+  public function getResults($page, $resultsPerPage, $term)
   {
+    $term = '%' . $term . '%';
+    $fromLimit = ($page - 1) * $resultsPerPage;
+
     $query = $this->con->prepare("SELECT * FROM sites
       WHERE title LIKE :term
       OR url LIKE :term
       OR keywords LIKE :term
       OR description LIKE :term
-      ORDER BY clicks DESC");
-
-    $term = '%' . $term . '%';
+      ORDER BY clicks DESC
+      LIMIT :fromLimit, :resultsPerPage");
 
     $query->bindParam(":term", $term);
+    $query->bindParam(":fromLimit", $fromLimit, PDO::PARAM_INT);
+    $query->bindParam(":resultsPerPage", $resultsPerPage, PDO::PARAM_INT);
     $query->execute();
 
     $results = [];

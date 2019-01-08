@@ -9,12 +9,14 @@
   } else {
     $term = $_GET['q'];
     $self = $_SERVER['PHP_SELF'];
-    $type = "web";
 
-    // Check if type is images
-    if (isset($_GET['type']) && $_GET['type'] === "images") {
-      $type = "images";
-    } 
+    // Set type
+    $type = isset($_GET['type']) && $_GET['type'] == 'images' ? 'images' : 'web';
+   
+    // Set page
+    $page = isset($_GET['page']) && !empty($_GET['page']) ? $_GET['page'] : 1;
+
+    $resultsPerPage = 10;
   }
 ?>
 
@@ -50,40 +52,96 @@
     <!-- /.container -->
   </header>
 
-  <section class="results">
-    <div class="container container--narrow">
-      <div class="results__count">
-        <?php
-          $resultsProvider = new WebResultsProvider($con);
-          $resultsCount = $resultsProvider->getNumResults($term);
-          echo "$resultsCount results found.";
-        ?>
-      </div>
-      <!-- /.results__count -->
 
-      <div class="results__data">
-        <?php 
-          $resultsArray = $resultsProvider->getResults(1, 20, $term);
-          
-          foreach ($resultsArray as $result) :
-        ?>
-          <div class="results__item">
-            <a href="<?= $result['url'] ?>" class="results__link">
-              <h2 class="results__title">
-                <?= $result['title'] ?>
-              </h2>
-
-              <cite class="results__url"><?= $result['url'] ?></cite>
-            </a>
-
-            <p class="results__description"><?= $result['description'] ?></p>
-          </div>
-          <!-- ./results__item -->
-        <?php endforeach; ?>
-      </div>
-      <!-- ./results__data -->
+  <section class="results container container--narrow">
+    <div class="results__count">
+      <?php
+        $resultsProvider = new WebResultsProvider($con);
+        $resultsCount = $resultsProvider->getNumResults($term);
+        echo "$resultsCount results found.";
+      ?>
     </div>
-    <!-- /.container -->
+    <!-- /.results__count -->
+
+    <div class="results__data">
+      <?php 
+        $resultsArray = $resultsProvider->getResults($page, $resultsPerPage, $term);
+        
+        foreach ($resultsArray as $result) :
+      ?>
+        <div class="results__item">
+          <a href="<?= $result['url'] ?>" class="results__link">
+            <h2 class="results__title">
+              <?= $result['title'] ?>
+            </h2>
+
+            <cite class="results__url"><?= $result['url'] ?></cite>
+          </a>
+
+          <p class="results__description"><?= $result['description'] ?></p>
+        </div>
+        <!-- ./results__item -->
+      <?php endforeach; ?>
+    </div>
+    <!-- ./results__data -->
   </section>
+
+
+  <div class="container container--narrow">
+    <nav class="pagination" aria-label="Page Navigation">
+
+      <!-- Previous Button -->
+      <?php if ($page - 1 > 0) : ?>
+        <a 
+          href='<?= "$self?q=$term&type=$type&page=" . ($page - 1) ?>'
+          class="pagination__link pagination__link--before"
+          title="Previous Page"
+        >
+          <img src="assets/img/left-chevron.svg" alt="" aria-hidden="true">
+
+          <span class="sr-only">Previous Page.</span>
+        </a>
+      <?php endif; ?>
+      
+      <!-- Pagination Numbers -->
+      <?php 
+        $totalPages = ceil($resultsCount / $resultsPerPage);
+        $pagesToShow = 7;
+        $paginationStartingPoint = $page - floor($pagesToShow / 2);
+
+        if ($paginationStartingPoint < 1) {
+          $paginationStartingPoint = 1;
+        }
+
+        for ($i = 0; $i < $pagesToShow; $i++) :
+          $paginationNumber = $paginationStartingPoint + $i;
+
+          if ($paginationNumber <= $totalPages) :
+      ?>
+        <a  
+          href='<?= "$self?q=$term&type=$type&page=$paginationNumber" ?>'
+          class="pagination__link <?= ($page == $paginationNumber) ? 'pagination__link--active' : '' ?>"
+        >
+          <?= $paginationNumber ?>
+        </a>
+      <?php endif; endfor; ?>
+
+      <!-- Next Button -->
+      <?php if ($page + 1 < $totalPages) : ?>
+        <a 
+          href='<?= "$self?q=$term&type=$type&page=" . ($page + 1) ?>'
+          class="pagination__link pagination__link--after"
+          title="Next Page"
+        >
+          <img src="assets/img/left-chevron.svg" alt="" aria-hidden="true">
+
+          <span class="sr-only">Next Page.</span>
+        </a>
+      <?php endif; ?>
+
+    </nav>
+  </div>
+  <!-- ./container -->
+
 
 <?php require "includes/footer.php" ?>
