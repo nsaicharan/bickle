@@ -1,13 +1,12 @@
 .pagination {
   display: flex;
   align-items: start;
-  margin: 3rem 0 4.5rem;
+  margin: 3.5rem 0 4.5rem;
 
   &__link {
     position: relative;
     margin: 0 1rem;
     padding: 1rem 1.8rem;
-    font-size: 1.5rem;
     color: $color-grey-dark;
     text-decoration: none;
     transition: 0.1s ease-out;

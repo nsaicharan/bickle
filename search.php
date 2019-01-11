@@ -70,10 +70,12 @@
         foreach ($resultsArray as $result) :
       ?>
         <div class="results__item">
-          <a href="<?= $result['url'] ?>" class="results__link">
-            <h2 class="results__title">
-              <?= $result['title'] ?>
-            </h2>
+          <a 
+            href="<?= $result['url'] ?>" 
+            class="results__link js-result" 
+            data-id="<?= $result['id'] ?>"
+          >
+            <h2 class="results__title"><?= $result['title'] ?></h2>
 
             <cite class="results__url"><?= $result['url'] ?></cite>
           </a>
