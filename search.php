@@ -1,4 +1,7 @@
 <?php
+  session_start();
+  $_SESSION['search'] = true; // Will be used in process.php while updating clicks count 
+
   require "config.php";
   require "includes/WebResultsProvider.php";
 
@@ -30,6 +33,7 @@
 
       <form role="search" action='<?= $self ?>' class="search-header__form">
         <input type="text" class="search-header__input" name="q" value="<?= $term; ?>">
+        <input type="hidden" name="type" value="<?= $type ?>">
         <button class="search-header__submit-btn">
           <img src="assets/img/search.svg" alt="search icon">
         </button>
