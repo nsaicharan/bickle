@@ -4,15 +4,17 @@
 
   require "config.php";
   require "includes/WebResultsProvider.php";
+  require "includes/ImageResultsProvider.php";
+
+  $self = str_replace('.php', '', htmlspecialchars($_SERVER['PHP_SELF']));
 
   // Check if search term (q) exists
   if (!isset($_GET['q']) || empty($_GET['q'])) {
-    header("Location: /");
+    header("Location: $self/.."); // Go back
     exit;
   } else {
     $term = $_GET['q'];
-    $self = $_SERVER['PHP_SELF'];
-
+    
     // Set type
     $type = isset($_GET['type']) && $_GET['type'] == 'images' ? 'images' : 'web';
    
@@ -28,7 +30,7 @@
   <header class="search-header">
     <div class="container container--narrow">
       <div class="text-center">
-        <a href="/" class="search-header__title">Bickle</a>
+        <a href='<?= "$self/.." ?>' class="search-header__title">Bickle</a>
       </div >
 
       <form role="search" action='<?= $self ?>' class="search-header__form">

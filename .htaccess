@@ -1,0 +1,5 @@
+# Ref - https://www.digitalocean.com/community/questions/how-to-hide-php-extension-in-url-using-htaccess
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php
