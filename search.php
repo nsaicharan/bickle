@@ -14,14 +14,11 @@
     exit;
   } else {
     $term = $_GET['q'];
-    
-    // Set type
-    $type = isset($_GET['type']) && $_GET['type'] == 'images' ? 'images' : 'web';
-   
-    // Set page
-    $page = isset($_GET['page']) && !empty($_GET['page']) ? $_GET['page'] : 1;
 
-    $resultsPerPage = 10;
+    // Set type, page, results per page
+    $type = isset($_GET['type']) && $_GET['type'] == 'images' ? 'images' : 'web';
+    $page = isset($_GET['page']) && !empty($_GET['page']) ? $_GET['page'] : 1;
+    $resultsPerPage = isset($_GET['type']) && $_GET['type'] == 'images' ? 20 : 10;
   }
 ?>
 
@@ -62,36 +59,60 @@
   <section class="results container container--narrow">
     <div class="results__count">
       <?php
-        $resultsProvider = new WebResultsProvider($con);
+        if ($type == 'web') {
+          $resultsProvider = new WebResultsProvider($con);
+        } else {
+          $resultsProvider = new ImageResultsProvider($con);
+        }
+
         $resultsCount = $resultsProvider->getNumResults($term);
         echo "$resultsCount results found.";
       ?>
     </div>
     <!-- /.results__count -->
 
-    <div class="results__data">
-      <?php 
-        $resultsArray = $resultsProvider->getResults($page, $resultsPerPage, $term);
-        
-        foreach ($resultsArray as $result) :
-      ?>
-        <div class="results__item">
-          <a 
-            href="<?= $result['url'] ?>" 
-            class="results__link js-result" 
-            data-id="<?= $result['id'] ?>"
-          >
-            <h2 class="results__title"><?= $result['title'] ?></h2>
+    <?php 
+      $resultsArray = $resultsProvider->getResults($page, $resultsPerPage, $term);
 
-            <cite class="results__url"><?= $result['url'] ?></cite>
-          </a>
+      if ($type == 'web') :
+    ?>
 
-          <p class="results__description"><?= $result['description'] ?></p>
-        </div>
-        <!-- ./results__item -->
+    <div class="results__web">
+      <?php foreach ($resultsArray as $result) :  ?> 
+      <div class="results__item">
+        <a 
+          href="<?= $result['url'] ?>" 
+          class="results__link js-result" 
+          data-id="<?= $result['id'] ?>"
+        >
+          <h2 class="results__title"><?= $result['title'] ?></h2>
+
+          <cite class="results__url"><?= $result['url'] ?></cite>
+        </a>
+
+        <p class="results__description"><?= $result['description'] ?></p>
+      </div>
+      <!-- ./results__item -->
       <?php endforeach; ?>
     </div>
-    <!-- ./results__data -->
+    <!-- /.results__web -->
+
+    <?php else: ?>
+
+      <div class="results__images">
+        <?php foreach ($resultsArray as $result): ?>
+        <a href="<?= $result['src'] ?>" class="results__item--image">
+          <img 
+            src="<?= $result['src'] ?>" 
+            alt="<?= $result['alt'] ?>"
+          >
+        </a>
+        <?php endforeach;?>
+      </div>
+      <!-- /.results__images -->
+
+    <?php endif; ?>
+
   </section>
 
 
