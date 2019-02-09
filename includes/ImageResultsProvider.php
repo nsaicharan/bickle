@@ -25,7 +25,7 @@ class ImageResultsProvider
     return $row['total'];
   }
 
-  public function getResults($page, $resultsPerPage, $term)
+  public function getResultsHTML($page, $resultsPerPage, $term)
   {
     $term = '%' . $term . '%';
     $fromLimit = ($page - 1) * $resultsPerPage;
@@ -42,24 +42,30 @@ class ImageResultsProvider
     $query->bindParam(":resultsPerPage", $resultsPerPage, PDO::PARAM_INT);
     $query->execute();
 
-    $results = [];
+    $html = '';
 
     while($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $src = $row['src'];
+      $alt = $row['alt'];
+      $title = $row['title'];
 
-      // Add 'displayText' to row data
-      if ($row['title']) {
-        $row['displayText'] = $row['title'];
-      } else if ($row['alt']) {
-        $row['displayText'] = $row['alt'];
+      // Set displayText value
+      if ($title) {
+        $displayText = $title;
+      } else if ($alt) {
+        $displayText = $alt;
       } else {
-        $row['displayText'] = $row['src'];
+        $displayText = $src;
       }
 
-      // Push row data into results array
-      $results[] = $row;
+      $html .= "
+        <a href='$src' class='results__item--image'>
+          <img src='$src' alt='$alt'>
+        </a>
+      ";
     }
 
-    return $results;
+    return $html;
   }
 }
 

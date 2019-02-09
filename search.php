@@ -66,53 +66,29 @@
         }
 
         $resultsCount = $resultsProvider->getNumResults($term);
+
         echo "$resultsCount results found.";
       ?>
     </div>
     <!-- /.results__count -->
 
     <?php 
-      $resultsArray = $resultsProvider->getResults($page, $resultsPerPage, $term);
+      $resultsHTML= $resultsProvider->getResultsHTML($page, $resultsPerPage, $term);
 
       if ($type == 'web') :
     ?>
-
-    <div class="results__web">
-      <?php foreach ($resultsArray as $result) :  ?> 
-      <div class="results__item">
-        <a 
-          href="<?= $result['url'] ?>" 
-          class="results__link js-result" 
-          data-id="<?= $result['id'] ?>"
-        >
-          <h2 class="results__title"><?= $result['title'] ?></h2>
-
-          <cite class="results__url"><?= $result['url'] ?></cite>
-        </a>
-
-        <p class="results__description"><?= $result['description'] ?></p>
+    
+      <div class="results__web">
+        <?= $resultsHTML; ?>
       </div>
-      <!-- ./results__item -->
-      <?php endforeach; ?>
-    </div>
-    <!-- /.results__web -->
 
     <?php else: ?>
 
       <div class="results__images">
-        <?php foreach ($resultsArray as $result): ?>
-        <a href="<?= $result['src'] ?>" class="results__item--image">
-          <img 
-            src="<?= $result['src'] ?>" 
-            alt="<?= $result['alt'] ?>"
-          >
-        </a>
-        <?php endforeach;?>
+        <?= $resultsHTML; ?>
       </div>
-      <!-- /.results__images -->
 
     <?php endif; ?>
-
   </section>
 
 

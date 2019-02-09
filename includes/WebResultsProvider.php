@@ -26,7 +26,7 @@ class WebResultsProvider
     return $row['total'];
   }
 
-  public function getResults($page, $resultsPerPage, $term)
+  public function getResultsHTML($page, $resultsPerPage, $term)
   {
     $term = '%' . $term . '%';
     $fromLimit = ($page - 1) * $resultsPerPage;
@@ -44,18 +44,27 @@ class WebResultsProvider
     $query->bindParam(":resultsPerPage", $resultsPerPage, PDO::PARAM_INT);
     $query->execute();
 
-    $results = [];
+    $html = '';
 
     while($row = $query->fetch(PDO::FETCH_ASSOC)) {
-      // Limit the length of title and description
-      $row['title'] = $this->trimField($row['title'], 70);
-      $row['description'] = $this->trimField($row['description'], 200);
+      $url = $row['url'];
+      $id = $row['id'];
+      $title = $this->trimField($row['title'], 73);
+      $description = $this->trimField($row['description'], 200);
 
-      // Push row data into results array
-      $results[] = $row;
+      $html .= "
+        <div class='results__item'>
+          <a href='$url' class='results__link js-result' data-id='$id'>
+            <h2 class='results__title'>$title</h2>
+            <cite class='results__url'>$url</cite>
+          </a>
+
+          <p class='results__description'>$description</p>
+        </div>
+      ";
     }
 
-    return $results;
+    return $html;
   }
 
   private function trimField($string, $characterLimit)
